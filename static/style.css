@@ -1,0 +1,79 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-size: 0.4rem;
+}
+
+div {
+    box-sizing: border-box;
+}
+
+#app {
+    margin: 0 auto;
+    background-color: #141414;
+    color: beige;
+    width: 10rem;
+    min-height: 100%;
+    padding-bottom: 3rem;
+    padding: 0.4rem 0.4rem 2rem 0.4rem;
+}
+.tabs {
+    height: 1.5rem;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.1rem 0.5rem;
+    background-color: #000;
+}
+.tabs .logo {
+    height: 100%;
+}
+.tabs .tab {
+    flex: 1;
+    font-size: 0.32rem;
+    text-align: center;
+    line-height: 0.36rem;
+}
+.tabs .curr-tab {
+    background: linear-gradient(to right, #00F260, #FF7300);
+    -webkit-background-clip: text;
+    color: transparent;
+    display: inline-block;
+    font-weight: bold;
+}
+.title {
+    background: linear-gradient(to right, #00F260, #FF7300);
+    -webkit-background-clip: text;
+    color: transparent;
+    font-size: 0.4rem;
+}
+.list {
+    margin: 0.5rem 0 2rem 0;
+    font-size: 0.35rem;
+}
+.list .tr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.2rem;
+    padding: 0.2rem 0;
+    border-bottom: 1px solid #666;
+}
+.list .tr .td {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.list .tr .td3 {
+    flex: 3;
+}
