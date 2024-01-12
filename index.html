@@ -33,9 +33,40 @@
         </div>
 
         <div class="title">中国饮料/เครื่องดื่มจีน/Chinese drinks</div>
+        <div class="list">
+          <div class="item tr" @click="clickItem(item)" v-for="(item, i) in drinks" :key="i">
+            <div class="td td3">{{ item.name }}</div>
+            <div class="td">{{ item.price }}฿</div>
+            <div class="td">{{ item.remark }}<img v-if="item.img" class="img" src="./img/img.png" alt=""></div>
+          </div>
+        </div>
+
         <div class="title">汤底/ซุป/Base Soup</div>
+        <div class="list">
+          <div class="item tr" v-for="(item, i) in soups" :key="i">
+            <div class="td td3">{{ item.name }}</div>
+            <div class="td">{{ item.price }}฿</div>
+            <div class="td">{{ item.remark }}</div>
+          </div>
+        </div>
+
         <div class="title">肉类/เนื้อ/Meat</div>
+        <div class="list">
+          <div class="item tr" v-for="(item, i) in meals" :key="i">
+            <div class="td td3">{{ item.name }}</div>
+            <div class="td">{{ item.price }}฿</div>
+            <div class="td">{{ item.remark }}</div>
+          </div>
+        </div>
+
         <div class="title">蔬菜/ผัก/Vegetable</div>
+        <div class="list">
+          <div class="item tr" v-for="(item, i) in vgtbs" :key="i">
+            <div class="td td3">{{ item.name }}</div>
+            <div class="td">{{ item.price }}฿</div>
+            <div class="td">{{ item.remark }}</div>
+          </div>
+        </div>
       </template>
 
       <!-- 泰 -->
@@ -45,6 +76,9 @@
 
       
 
+      <div class="img-box" v-if="currImg" @click="currImg = ''">
+        <img :src="currImg" alt="img">
+      </div>
     </div>
 
     <script>
@@ -55,15 +89,79 @@
             winW:
               document.body.clientWidth > 750 ? 750 : document.body.clientWidth,
             currTab: 1,
+            currImg: '',
             noodles: [
               { name: '麻辣面/บะหมี่รสเผ็ด/Spicy noodles', price: 60, remark: '🌶️' },
               { name: '酸辣粉/บะหมี่ผัดเปรี้ยวหวาน/Spicy and sour noodles', price: 50, remark: '🌶️🌶️' },
+            ],
+            drinks: [
+              { name: '柠檬/มะนาว/Lemon', price: 20, remark: '', img: './img/drink1.png' },
+              { name: '梨/ลูกแพร์/Pear', price: 20, remark: '', img: './img/drink2.jpg' },
+              { name: '橙子/ส้ม/Orange', price: 20, remark: '', img: './img/drink3.png' },
+              { name: '红茶/ชาดำ/Black tea', price: 20, remark: '', img: './img/drink4.png' },
+              { name: '水蜜桃/ลูกพีช/Peach', price: 20, remark: '', img: './img/drink5.png' },
+              { name: '王老吉/ชาสมุนไพร/Herbal tea', price: 25, remark: '', img: './img/drink6.jpg' },
+              { name: '营养快线/นมหวาน/Sweet milk', price: 30, remark: '', img: './img/drink7.jpg' },
+            ],
+            soups: [
+              { name: '白汤/ซุปขาว/White soup ', price: 50, remark: '' },
+              { name: '宝贝辣เผ็ดเล็กน้อย/Baby spicy', price: 50, remark: '🌶️' },
+              { name: '经典麻辣/คลาสสิคเผ็ด/Classic spicy', price: 50, remark: '🌶️🌶️' },
+              { name: '超级辣/เผ็ดสุด ๆ/Super spicy', price: 50, remark: '🌶️🌶️🌶️' },
+            ],
+            meals: [
+              { name: '牛肉片/เนื้อสไลด์/Sliced beef', price: 40, remark: '' },
+              { name: '猪肉片/หมูสไลด์/Pork slices', price: 40, remark: '' },
+              { name: '猪颈肉片/สันคอหมูสไลด์/Sliced Pork Neck', price: 40, remark: '' },
+              { name: '五花肉片/หมูสามชั้นสไลด์/Pork belly slices', price: 40, remark: '' },
+              { name: '培根/เบคอน/Bacon', price: 40, remark: '' },
+              { name: '芝麻卤猪肉/หมูนุ่มหมักงา/Soft pork marinated in sesame', price: 40, remark: '' },
+              { name: '芝麻牛肉/เนื้อหมักงา/Beef marinated in sesame', price: 40, remark: '' },
+              { name: '猪肝/ตับหมู/Pork liver', price: 40, remark: '' },
+              { name: '滑肉/หมูเด้ง/Bouncy Pork', price: 40, remark: '' },
+              { name: '盐焗鸡肉/เนื้อไก่หมัก/Marinated Chicken', price: 40, remark: '' },
+              { name: '鲜虾/กุ้งสด/Fresh shrimp', price: 40, remark: '' },
+              { name: '鱿鱼/ปลาหมึกสด/Fresh squid', price: 80, remark: '' },
+              { name: '脆皮鱿鱼/หมึกกรอบ/Crispy Squid', price: 50, remark: '' },
+              { name: '多利鱼/เนื้อปลาดอลลี่/Dolly fish', price: 40, remark: '' },
+              { name: '鸡蛋/ไข่ไก่/Egg', price: 10, remark: '' },
+            ],
+            vgtbs: [
+              { name: '泡泡豆腐/เต้าหู้ฟอง/Bubble Tofu', price: 20, remark: '' },
+              { name: '鸡蛋豆腐/เต้าหู้ไข่/Egg Tofu', price: 20, remark: '' },
+              { name: '日本豆腐/เต้าหู้ญี่ปุ่น/Japanese tofu', price: 20, remark: '' },
+              { name: '鱼豆腐/เต้าหู้ปลา/Fish Tofu', price: 40, remark: '' },
+              { name: '莴苣/ผักกาด/Lettuce', price: 20, remark: '' },
+              { name: '卷心菜/กะหล่ำฝอย/Shredded cabbage', price: 20, remark: '' },
+              { name: '上海青/กวางตุ้ง/Green vegetables', price: 30, remark: '' },
+              { name: '空心菜/ผักบุ้ง/Water spinach', price: 15, remark: '' },
+              { name: '豆芽/ต้นอ่อนทานตะวัน/Bean sprouts', price: 20, remark: '' },
+              { name: '芹菜/ผักขึ้นฉ่าย/Celery', price: 20, remark: '' },
+              { name: '日本葱/ต้นหอมญี่ปุ่น/Japanese spring onions', price: 40, remark: '' },
+              { name: '南瓜/ฟักทอง/Pumpkin', price: 30, remark: '' },
+              { name: '香菇/เห็ดหอม/Shiitake mushrooms', price: 30, remark: '' },
+              { name: '杏鲍菇/เห็ดออรินจิ/Eryngii Mushroom', price: 30, remark: '' },
+              { name: '姬菇/เห็ดชิเมจิ/Shimeji mushroom', price: 30, remark: '' },
+              { name: '金针菇/เห็ดเข็มทอง/Golden Needle Mushroom', price: 30, remark: '' },
+              { name: '甜玉米/ข้าวโพดหวาน/Sweet corn', price: 30, remark: '' },
+              { name: '玉米笋/ข้าวโพดอ่อน/Baby corn', price: 30, remark: '' },
+              { name: '海带/สาหร่าย/Kelp', price: 20, remark: '' },
+              { name: '蒟蒻條/เส้นบุ/Konjac strips', price: 30, remark: '' },
+              { name: '方便面/เส้นมาม่า/Mama noodles', price: 15, remark: '' },
+              { name: '红薯粉/เส้นหนึบจีน/Chinese sweet potato noodles', price: 20, remark: '' },
+              { name: '粉丝/เส้นหมี่หยก/Jade Vermicelli', price: 20, remark: '' },
             ]
+            // 🖼️
           };
         },
         mounted() {
         },
         methods: {
+          clickItem(item) {
+            if (item.img) {
+              this.currImg = item.img
+            }
+          }
         },
       });
     </script>
