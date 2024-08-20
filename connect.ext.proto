@@ -1,0 +1,365 @@
+syntax = "proto3";
+
+
+enum PackageType {
+  PT_UNKNOWN = 0; // 未知
+  PT_SIGN_IN = 1; // 设备登录请求
+  PT_SYNC = 2; // 消息同步触发
+  PT_HEARTBEAT = 3; // 心跳
+  PT_MESSAGE = 4; // 消息投递
+  PT_SUBSCRIBE_ROOM = 5; // 订阅房间
+  PT_MESSAGE_USER = 6; // 给用户发消息
+  PT_MESSAGE_ROOM = 7; // 群发
+  PT_MESSAGE_HISTORY= 8; // 历史消息
+
+  PT_MESSAGE_ADDCHARGROUP= 9; // 添加分组
+  PT_MESSAGE_EDITCHARGROUP= 10; // 编辑分组 置顶/排序
+  PT_MESSAGE_DELCHARGROUP= 11; // 删除分组
+  PT_MESSAGE_LISTGROUP= 12; // 获取分组列表
+  PT_MESSAGE_LISTCHARGROUP= 13; // 获取分组里面的聊天列表
+  PT_MESSAGE_EDITCHAR= 14; // 编辑某一条聊天到某个分组/置顶/排序/不接收消息
+  PT_MESSAGE_SEARCHUSER= 15; // 查询用户
+  
+    PT_MESSAGE_ADDQPH = 16; // 新增快捷语
+    PT_MESSAGE_EDITQPH = 17; // 修改
+    PT_MESSAGE_DELQPH = 18; // 删除
+    PT_MESSAGE_LISTQPH = 19; // 列表
+  
+	PT_MESSAGE_ADDQPHC = 20; // 新增快捷语分类
+	PT_MESSAGE_EDITQPHC = 21; // 修改
+	PT_MESSAGE_DELQPHC = 22; // 删除
+	PT_MESSAGE_LISTQPHC = 23; // 列表
+	PT_MESSAGE_GETKF = 24; // 获取客服deviceid
+	PT_MESSAGE_MUTE = 25; // 禁言解禁操作
+	PT_MESSAGE_FORBID = 26; // 禁止解除禁止的操作
+
+}
+
+// 上行数据
+message Input {
+  PackageType type = 1; // 包的类型
+  int64 requestid = 2; // 请求id
+  bytes data = 3; // 数据
+}
+
+// 下行数据
+message Output {
+  PackageType type = 1; // 包的类型
+  int64 requestid = 2; // 请求id
+  int32 code = 3; // 错误码
+  string message = 4; // 错误信息
+  bytes data = 5; // 数据
+}
+
+// 设备登录,packagetype:1
+message SignInInput {
+  int64 deviceid = 1; // 设备id
+  int64 userid = 2; // 用户id
+  string token = 3; // 秘钥
+}
+
+// 消息同步请求,packagetype:2
+message SyncInput {
+  int64 seq = 1; // 客户端已经同步的序列号
+}
+// 消息同步响应,packagetype:2
+message SyncOutput {
+  repeated Message messages = 1; // 消息列表
+  bool hasmore = 2; // 是否有更多数据
+}
+
+// 投递消息回执,packagetype:4
+message MessageACK {
+  int64 deviceack = 2; // 设备收到消息的确认号
+  int64 receivetime = 3; // 消息接收时间戳，精确到毫秒
+}
+enum MessageType {
+  MEUNKNOWN = 0; // 未知
+  METEXT = 1; // 文字消息
+  MEEMO = 2; // 表情消息
+  MEPIC = 3; // 图片消息
+  MEVIO = 4; // 视频消息
+  MEMON = 5; // 转账消息
+  MEJSON = 6; // json消息
+  MEMIX = 7; // 混合消息(一段html代码)
+}
+// 文字消息
+message MessageTextContent {
+  string data = 1; // 数据
+}
+// 表情消息
+message MessageMoContent {
+  string data = 1; // 数据
+}
+// 图片消息
+message MessagePicContent {
+  string data = 1; // 数据
+}
+// 视频消息
+message MessageVideoContent {
+  string data = 1; // 数据
+}
+// 转账消息
+message MessageMoneyContent {
+  string data = 1; // 数据
+}
+
+
+// 消息发送体
+message MessageInpute {
+  int64 fromdeviceid = 1; // 发送消息的设备号
+  int64 todeviceid = 2; // 接收消息的设备号
+  string sendtime = 3; // 消息发送时间
+  MessageType mtype = 4; // 消息类型
+  bytes data = 5; // 发送的具体数据
+}
+// 消息接收体
+message MessageOutpute {
+  int64 fromdeviceid = 1; // 发送消息的设备号
+  int64 todeviceid = 2; // 接收消息的设备号
+  string sendtime = 3; // 消息发送时间
+  MessageType mtype = 4; // 消息类型
+  bytes data = 5; // 发送的具体数据
+}
+
+
+message ConnSignInReq {
+  int64 deviceid = 1; // 设备id
+  int64 userid = 2; // 用户id
+  string token = 3; // 秘钥
+  string connaddr = 4; // 服务器地址
+  string clientaddr = 5; // 客户端地址
+}
+
+message SyncReq {
+  int64 userid = 1; // 用户id
+  int64 deviceid = 2; // 设备id
+  int64 seq = 3; // 客户端已经同步的序列号
+}
+message SyncResp {
+  repeated Message messages = 1; // 消息列表
+  bool hasmore = 2; // 是否有更多数据
+}
+
+message MessageACKReq {
+  int64 userid = 1; // 用户id
+  int64 deviceid = 2; // 设备id
+  int64 deviceack = 3; // 设备收到消息的确认号
+  int64 receivetime = 4; // 消息接收时间戳，精确到毫秒
+}
+
+
+
+
+// 单条消息投递内容（估算大约100个字节）,todo 通知栏提醒
+message Message {
+	int32 code = 1; // 推送码
+	bytes content = 2; // 推送内容
+	int64 seq = 3; // 用户消息发送序列号
+	string send_time = 4; // 消息发送时间
+	MessageStatus status = 5; // 消息状态
+	MessageCStatus cstatus = 6; // 消息审核状态
+	int32 msgtype = 7; // 消息类型
+}
+
+enum MessageStatus {
+  MS_NORMAL = 0; // 正常的
+  MS_RECALL = 1; // 撤回
+  MS_ALREAD = 2; // 已读
+}
+
+enum MessageCStatus {
+  MSC_NORMAL = 0; // 正常的
+  MSC_PASS = 1; // 通过
+  MSC_REFUSE = 2; // 审核失败
+}
+
+
+
+// 消息同步请求，获取历史消息,packagetype:8获取历史消息
+message SyncHistoryInput {
+	string chatid = 1; // 消息id
+	int32 perpage = 2; // 每页数量
+	int32 page = 3; // 页数
+	int64 deviceid = 4; //用户id
+	int32 ctype = 5; //值为1 标识是与客服的聊天历史 其余的值为非客服聊天
+}
+
+
+message ChatGroupModifyReq {
+  int64 id = 1;         //ID
+  int64 deviceid = 2; // 设备id
+  int32 sort =  3;    // 排序，在置顶时使用
+  int32 istop = 4;    // 是否置顶  1为置顶
+  string name =  5;    // 编辑group时候 如果传了这个字段则需要修改
+}
+message ChatGroupModifyRsp {
+  int64 id = 1;         //ID
+  int64 deviceid = 2; //
+  int32 sort =  3;    //
+  int32 istop = 4;    //
+  string name =  5;    //
+}
+message GroupListReq {
+  int64 deviceid = 1; // 设备id
+  int32 page = 2; // 分页
+  int32 pagesize = 3; // 分页参数
+}
+message ChatGroupListReq {
+  int64 deviceid = 1; // 设备id
+  int64 groupid = 2; // 分组id
+  int32 page = 3; // 分页
+  int32 pagesize = 4; // 分页参数
+}
+//每个分组的基本信息
+message ChatGroupItem {
+  int64 id = 1; // id
+  int32 sort = 2; // 排序
+  int32 istop = 3; // 是否置顶
+  int64 deviceid = 4; // 设备id
+  string name = 5; // 创建时间
+  string createdtime = 6; // 创建时间
+  string updatetime = 7; // 更新时间
+}
+//每个聊天的基本信息
+message ChatItemModifyReq {
+  int64 id = 1; // id
+  int64 deviceid = 2; // 设备id
+  int64 chatgroupid = 3; // 聊天分组id
+  string chatid = 4; // 聊天ID
+  int32 sort = 5; // 排序
+  int32 istop = 6; // 是否置顶
+  int32 enableflag = 7; // 是否屏蔽消息
+}
+//每个聊天的基本信息
+message ChatItem {
+  int64 id = 1; // id
+  int64 deviceid = 2; // 设备id
+  int64 chatgroupid = 3; // 聊天分组id
+  string chatid = 4; // 聊天ID
+  int32 sort = 5; // 排序
+  int32 istop = 6; // 是否置顶
+  int32 enableflag = 7; // 是否已审核
+  string createdtime = 8; // 创建时间
+  string updatetime = 9; // 更新时间
+  int64 deep = 10;       // 对方层级 -1代表上级 1代表直属下级 其余代表非直接下级下级玩家
+  int64 Tdeviceid = 11; // 对方用户名
+  string TUsername = 12; // 对方用户名
+  string THeadPhoto = 13; // 对方头像
+  string TIp = 14; // 对方登录ip
+  int32 iskf = 15; // 1标识是客服
+  int32 vip = 16; // vip等级
+  int64 todeviceid = 17; // 对方设备id
+  int64 unreadnums = 18; // 未读消息数
+  int32 agentlevel = 19; // 代理等级
+}
+//获取获取所有聊天列表
+message ChatListRsp {
+  repeated ChatItem chatitem = 1;//聊天列表
+}
+
+//获取分组列表
+message GroupListRsp {
+  repeated ChatGroupItem groupitem = 1;//分组列表
+}
+//获取获取某个分组下面的所有聊天
+message GroupChatListRsp {
+  int64 id = 1; // id
+  repeated ChatItem chatitem = 2;//分组列表
+}
+//每个用户的基本信息
+message UserRole {
+  int64 roleid = 1; // 用户的角色id
+  int64 pid = 2; // 上级id
+  int64 deep = 3; // 校色深度
+  string username = 4; // 用户名
+  string headphoto = 5; // 用户头像
+  string ip = 6; // 登录ip
+  int32 vip = 7; // vip等级
+  int32 agentlevel = 8; // 代理等级
+}
+//用户列表
+message UserRolesRsp {
+  repeated UserRole roles = 1;//用户列表
+}
+
+//查询用户请求
+message UserRoleReq {
+  int64 roleid = 1; // 设备id
+  int64 deviceid = 2; // 设备id
+
+}
+//查询客服信息
+message KfRoleIdGetReq {
+  int64 deviceid = 1; // 设备id
+}
+//快捷语 增删改 请求协议
+message QuickPhrasesModifyReq {
+  int64 id = 1; //快捷语id只有删除和修改的时候传，新增的时候不传
+  int64 qhcid = 2; //分类id
+  int64 deviceid = 3; //用户id
+  int32 istop = 4; //1为置顶 其余值不置顶
+  int32 sort = 5; //排序，这个需要前端自己定义数字
+  int32 isautorsp = 6; //是否是自动回复 前端用的
+  string content = 7; //快捷语的内容
+}
+//快捷语类型 增删改 请求协议
+message QuickPhrasesCModifyReq {
+  int64 id = 1; // id只有删除和修改的时候传，新增的时候不传
+  int64 deviceid = 2; //用户id
+  int32 sort = 3; //排序，这个需要前端自己定义数字
+  string title = 4; //分类的标题
+}
+//快捷语列表 请求协议
+message QuickPhrasesListReq {
+  int64 deviceid = 1; // 设备id  如果此字段没有或者等于0 则表示是官方的，不能修改删除
+  int64 qhcid = 2; // 设备id
+  int32 page = 3; // 分页
+  int32 pagesize = 4; // 分页参数
+}
+//快捷语分类列表 请求协议
+message QuickPhrasesCListListReq {
+  int64 deviceid = 1; // 设备id
+  int32 page = 2; // 分页
+  int32 pagesize = 3; // 分页参数
+}
+//快捷语列表返回协议
+message QuickPhrasesListRsp {
+  repeated QuickPhrases quickphrase = 1;
+}
+//快捷语分类列表返回协议
+message QuickPhrasesCListRsp {
+  repeated QuickPhrasesC quickphrasec = 1;
+}
+//快捷语具体字段
+message QuickPhrases {
+  int64 id = 1; //
+  int64 qhcid = 2; //
+  int64 deviceid = 3; // 如果此字段没有或者等于0 则表示是官方的，不能修改删除
+  int32 istop = 4; //
+  int32 sort = 5; //
+  int32 isautorsp = 6; //
+  string content = 7; //
+}
+//快捷语类型 具体字段
+message QuickPhrasesC {
+  int64 id = 1; //
+  int64 deviceid = 2; //
+  int32 sort = 3; //
+  string title = 4; //
+  int32 num = 5; //快捷语数量
+}
+//禁言解禁请求
+message MuteReq {
+  int64 deviceid = 1; // 设备id
+  string ip = 2; // ip
+  int32 mtype = 3; // 操作类型 1 禁言用户 2禁言ip   3解封用户 4解封ip
+  int32 days = 4; // 天数
+}
+//解封解封请求
+message ForbidReq {
+  int64 deviceid = 1; // 设备id
+  string ip = 2; // ip
+  int32 mtype = 3; // 操作类型 1 封禁用户 2封禁ip   3解封用户 4解封ip
+  int32 days = 4; // 天数
+}

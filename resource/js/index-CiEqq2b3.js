@@ -1,0 +1,1 @@
+import{d as s,e as a,o as e}from"./vue-DH2RNpQ3.js";import{b as o}from"./index-30tzVDQE.js";const t={class:"trans"},d=o(s({__name:"index",setup:s=>(s,o)=>(e(),a("div",t," 我是转账 "))}),[["__scopeId","data-v-86a7fb10"]]);export{d as default};

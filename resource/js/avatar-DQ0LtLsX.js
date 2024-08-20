@@ -1,0 +1,1 @@
+const a="/imgs/serviceModal/avatar.webp";export{a as _};
